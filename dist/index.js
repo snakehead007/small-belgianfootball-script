@@ -109,7 +109,6 @@ const AdmZip = __nccwpck_require__(270); //for unzipping
   //console.log(standenCsv);
 
   const standenVanFCBinkom = standenCsv.filter(s=>s.TEAM === "FC.Binkom");
-      console.log(standenVanFCBinkom)
   const standen = standenCsv.filter(s=>{
     let foundCorrectDIV = false;
     for(stand of standenVanFCBinkom){
@@ -119,6 +118,7 @@ const AdmZip = __nccwpck_require__(270); //for unzipping
     }
     return foundCorrectDIV;
   })
+  console.log({kalender,standen})
   return {
     kalender,
     standen

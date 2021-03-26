@@ -102,7 +102,6 @@ const AdmZip = require("adm-zip"); //for unzipping
   //console.log(standenCsv);
 
   const standenVanFCBinkom = standenCsv.filter(s=>s.TEAM === "FC.Binkom");
-      console.log(standenVanFCBinkom)
   const standen = standenCsv.filter(s=>{
     let foundCorrectDIV = false;
     for(stand of standenVanFCBinkom){
@@ -112,6 +111,7 @@ const AdmZip = require("adm-zip"); //for unzipping
     }
     return foundCorrectDIV;
   })
+  console.log({kalender,standen})
   return {
     kalender,
     standen
