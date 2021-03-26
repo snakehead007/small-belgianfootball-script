@@ -101,7 +101,7 @@ const AdmZip = require("adm-zip"); //for unzipping
       )
       );
   //console.log(standenCsv);
-  const standen = standenCsv.filter(search=>search.TEAM==="FC.Binkom");
+  const standen = standenCsv;
   console.log({
     kalender,
     standen

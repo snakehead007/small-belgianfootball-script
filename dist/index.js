@@ -5,13 +5,14 @@ module.exports =
 /***/ 225:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const http = __nccwpck_require__(605);
-const fs = __nccwpck_require__(747);
-const AdmZip = __nccwpck_require__(270);
+//Dependencies
+const http = __nccwpck_require__(605); //for making request
+const fs = __nccwpck_require__(747); //for using the file system
+const AdmZip = __nccwpck_require__(270); //for unzipping
 
 (async () => {
-  //async init
 
+  /********** FUNCTIONS ***********/
   const data = [
     {
       kalender_en_uitslagen:
@@ -23,6 +24,7 @@ const AdmZip = __nccwpck_require__(270);
     },
   ];
 
+  //Deletes the file with the given filename on the given path
   const deleteFile = (path, filename) => {
     const fullPath = `${path}/${filename}`;
     try{
@@ -32,6 +34,8 @@ const AdmZip = __nccwpck_require__(270);
     }
   };
 
+  // Promises to download a file from the given url, and saving it as the givenfilename.
+  // returns the filename where it was saved
   const downloadFile = (filename, url) => {
     return new Promise((resolve, reject) => {
       const savedAs = `${filename}`;
@@ -49,34 +53,16 @@ const AdmZip = __nccwpck_require__(270);
     });
   };
 
-  const getHtmlFromUrl = (url) => {
-    return new Promise((resolve, reject) => {
-        const http      = __nccwpck_require__(605),
-              https     = __nccwpck_require__(211);
-        let client = http;
-        if (url.toString().indexOf("https") === 0) {
-            client = https;
-        }
-        client.get(url, (resp) => {
-            let data = '';
-            resp.on('data', (chunk) => {
-                data += chunk;
-            });
-            resp.on('end', () => {
-                resolve(data);
-            });
-        }).on("error", (err) => {
-            reject(err);
-        });
-    });
-  };
-
+  //Reads the first file in the zip file
+  //returns the value as string
   const unzipFile = (path) => {
     const zip = new AdmZip(path);
     var zipEntries = zip.getEntries();
     return zipEntries[0].getData().toString();
   };
 
+  //reads the csv file as string given as parameter
+  //converts the csv file into a list and returns that list.
   const extractCsvStringToReadData = (raw) => {
     const list = raw.split("\n");
     let detailedList = [];
@@ -93,6 +79,7 @@ const AdmZip = __nccwpck_require__(270);
     return detailedList;
   };
 
+  /************ MAIN ***************/
 
   //kalender_en_uitslagen
   const kalenderFilename = Object.keys(data[0])[0]; //data[0] first entry
@@ -121,7 +108,7 @@ const AdmZip = __nccwpck_require__(270);
       )
       );
   //console.log(standenCsv);
-  const standen = standenCsv.filter(search=>search.TEAM==="FC.Binkom");
+  const standen = standenCsv;
   console.log({
     kalender,
     standen
@@ -2803,14 +2790,6 @@ module.exports = require("fs");;
 
 "use strict";
 module.exports = require("http");;
-
-/***/ }),
-
-/***/ 211:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("https");;
 
 /***/ }),
 
