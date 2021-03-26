@@ -1,10 +1,11 @@
-const http = require("http");
-const fs = require("fs");
-const AdmZip = require("adm-zip");
+//Dependencies
+const http = require("http"); //for making request
+const fs = require("fs"); //for using the file system
+const AdmZip = require("adm-zip"); //for unzipping
 
 (async () => {
-  //async init
 
+  /********** FUNCTIONS ***********/
   const data = [
     {
       kalender_en_uitslagen:
@@ -16,6 +17,7 @@ const AdmZip = require("adm-zip");
     },
   ];
 
+  //Deletes the file with the given filename on the given path
   const deleteFile = (path, filename) => {
     const fullPath = `${path}/${filename}`;
     try{
@@ -25,6 +27,8 @@ const AdmZip = require("adm-zip");
     }
   };
 
+  // Promises to download a file from the given url, and saving it as the givenfilename.
+  // returns the filename where it was saved
   const downloadFile = (filename, url) => {
     return new Promise((resolve, reject) => {
       const savedAs = `${filename}`;
@@ -42,34 +46,16 @@ const AdmZip = require("adm-zip");
     });
   };
 
-  const getHtmlFromUrl = (url) => {
-    return new Promise((resolve, reject) => {
-        const http      = require('http'),
-              https     = require('https');
-        let client = http;
-        if (url.toString().indexOf("https") === 0) {
-            client = https;
-        }
-        client.get(url, (resp) => {
-            let data = '';
-            resp.on('data', (chunk) => {
-                data += chunk;
-            });
-            resp.on('end', () => {
-                resolve(data);
-            });
-        }).on("error", (err) => {
-            reject(err);
-        });
-    });
-  };
-
+  //Reads the first file in the zip file
+  //returns the value as string
   const unzipFile = (path) => {
     const zip = new AdmZip(path);
     var zipEntries = zip.getEntries();
     return zipEntries[0].getData().toString();
   };
 
+  //reads the csv file as string given as parameter
+  //converts the csv file into a list and returns that list.
   const extractCsvStringToReadData = (raw) => {
     const list = raw.split("\n");
     let detailedList = [];
@@ -86,6 +72,7 @@ const AdmZip = require("adm-zip");
     return detailedList;
   };
 
+  /************ MAIN ***************/
 
   //kalender_en_uitslagen
   const kalenderFilename = Object.keys(data[0])[0]; //data[0] first entry
