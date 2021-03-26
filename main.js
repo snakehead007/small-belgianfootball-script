@@ -18,14 +18,14 @@ const AdmZip = require("adm-zip"); //for unzipping
   ];
 
   //Deletes the file with the given filename on the given path
-  const deleteFile = (path, filename) => {
-    const fullPath = `${path}/${filename}`;
-    try{
-      fs.unlinkSync(fullPath);
-    }catch(e){
-      console.log(`file ${fullPath} not found`);
-    }
-  };
+  // const deleteFile = (path, filename) => {
+  //   const fullPath = `${path}/${filename}`;
+  //   try{
+  //     fs.unlinkSync(fullPath);
+  //   }catch(e){
+  //     console.log(`file ${fullPath} not found`);
+  //   }
+  // };
 
   // Promises to download a file from the given url, and saving it as the givenfilename.
   // returns the filename where it was saved
@@ -77,7 +77,7 @@ const AdmZip = require("adm-zip"); //for unzipping
   //kalender_en_uitslagen
   const kalenderFilename = Object.keys(data[0])[0]; //data[0] first entry
   const kalenderUrl = data[0][Object.keys(data[0])];
-  deleteFile(".", `${kalenderFilename}.zip`);
+
   //3 . extract csv set as list
   const kalenderCsv = extractCsvStringToReadData(
     //2. unzip file
@@ -91,7 +91,6 @@ const AdmZip = require("adm-zip"); //for unzipping
   //standen
   const standenFilename = Object.keys(data[1])[0];
   const standenUrl = data[1][Object.keys(data[1])];
-  deleteFile(".", `${standenFilename}.zip`);
   //3 . extract csv set as list
   const standenCsv = extractCsvStringToReadData(
     //2. unzip file
@@ -101,11 +100,18 @@ const AdmZip = require("adm-zip"); //for unzipping
       )
       );
   //console.log(standenCsv);
-  const standen = standenCsv;
-  console.log({
-    kalender,
-    standen
-  });
+
+  const standenVanFCBinkom = standenCsv.filter(s=>s.TEAM === "FC.Binkom");
+      console.log(standenVanFCBinkom)
+  const standen = standenCsv.filter(s=>{
+    let foundCorrectDIV = false;
+    for(stand of standenVanFCBinkom){
+      if(stand.DIV===s.DIV){
+        foundCorrectDIV = true;
+      }
+    }
+    return foundCorrectDIV;
+  })
   return {
     kalender,
     standen
