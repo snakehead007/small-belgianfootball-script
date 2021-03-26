@@ -5,10 +5,9 @@ module.exports =
 /***/ 225:
 /***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const http = __nccwpck_require__(605); // or 'https' for https:// URLs
+const http = __nccwpck_require__(605);
 const fs = __nccwpck_require__(747);
 const AdmZip = __nccwpck_require__(270);
-const { resolve } = __nccwpck_require__(622);
 
 (async () => {
   //async init
@@ -20,7 +19,7 @@ const { resolve } = __nccwpck_require__(622);
     },
     {
       standen:
-        "http://static.belgianfootball.be/project/publiek/download/antcltdownP.zip",
+        "http://static.belgianfootball.be/project/publiek/download/bracltdownP.zip",
     },
   ];
 
@@ -35,7 +34,7 @@ const { resolve } = __nccwpck_require__(622);
 
   const downloadFile = (filename, url) => {
     return new Promise((resolve, reject) => {
-      const savedAs = `${filename}.zip`;
+      const savedAs = `${filename}`;
       const request = http.get(url, (response) => {
         if (response.statusCode === 200) {
           const file = fs.createWriteStream(savedAs);
@@ -47,6 +46,28 @@ const { resolve } = __nccwpck_require__(622);
           reject(`Gave status code ${response.statusCode}`);
         }
       });
+    });
+  };
+
+  const getHtmlFromUrl = (url) => {
+    return new Promise((resolve, reject) => {
+        const http      = __nccwpck_require__(605),
+              https     = __nccwpck_require__(211);
+        let client = http;
+        if (url.toString().indexOf("https") === 0) {
+            client = https;
+        }
+        client.get(url, (resp) => {
+            let data = '';
+            resp.on('data', (chunk) => {
+                data += chunk;
+            });
+            resp.on('end', () => {
+                resolve(data);
+            });
+        }).on("error", (err) => {
+            reject(err);
+        });
     });
   };
 
@@ -82,7 +103,7 @@ const { resolve } = __nccwpck_require__(622);
     //2. unzip file
     unzipFile(
       //1. download file
-      await downloadFile(kalenderFilename, kalenderUrl)
+      await downloadFile(`${kalenderFilename}.zip`, kalenderUrl)
       )
       );
   const kalender = kalenderCsv.filter(search=>search.HOME==="FC.Binkom");
@@ -96,11 +117,11 @@ const { resolve } = __nccwpck_require__(622);
     //2. unzip file
     unzipFile(
       //1. download file
-      await downloadFile(standenFilename, standenUrl)
+      await downloadFile(`${standenFilename}.zip`, standenUrl)
       )
       );
   //console.log(standenCsv);
-  const standen = standenCsv.filter(search=>search.HOME==="FC.Binkom");
+  const standen = standenCsv.filter(search=>search.TEAM==="FC.Binkom");
   console.log({
     kalender,
     standen
@@ -2782,6 +2803,14 @@ module.exports = require("fs");;
 
 "use strict";
 module.exports = require("http");;
+
+/***/ }),
+
+/***/ 211:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("https");;
 
 /***/ }),
 

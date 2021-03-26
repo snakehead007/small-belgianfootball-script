@@ -1,7 +1,6 @@
-const http = require("http"); // or 'https' for https:// URLs
+const http = require("http");
 const fs = require("fs");
 const AdmZip = require("adm-zip");
-const { resolve } = require("path");
 
 (async () => {
   //async init
@@ -13,7 +12,7 @@ const { resolve } = require("path");
     },
     {
       standen:
-        "http://static.belgianfootball.be/project/publiek/download/antcltdownP.zip",
+        "http://static.belgianfootball.be/project/publiek/download/bracltdownP.zip",
     },
   ];
 
@@ -28,7 +27,7 @@ const { resolve } = require("path");
 
   const downloadFile = (filename, url) => {
     return new Promise((resolve, reject) => {
-      const savedAs = `${filename}.zip`;
+      const savedAs = `${filename}`;
       const request = http.get(url, (response) => {
         if (response.statusCode === 200) {
           const file = fs.createWriteStream(savedAs);
@@ -40,6 +39,28 @@ const { resolve } = require("path");
           reject(`Gave status code ${response.statusCode}`);
         }
       });
+    });
+  };
+
+  const getHtmlFromUrl = (url) => {
+    return new Promise((resolve, reject) => {
+        const http      = require('http'),
+              https     = require('https');
+        let client = http;
+        if (url.toString().indexOf("https") === 0) {
+            client = https;
+        }
+        client.get(url, (resp) => {
+            let data = '';
+            resp.on('data', (chunk) => {
+                data += chunk;
+            });
+            resp.on('end', () => {
+                resolve(data);
+            });
+        }).on("error", (err) => {
+            reject(err);
+        });
     });
   };
 
@@ -75,7 +96,7 @@ const { resolve } = require("path");
     //2. unzip file
     unzipFile(
       //1. download file
-      await downloadFile(kalenderFilename, kalenderUrl)
+      await downloadFile(`${kalenderFilename}.zip`, kalenderUrl)
       )
       );
   const kalender = kalenderCsv.filter(search=>search.HOME==="FC.Binkom");
@@ -89,11 +110,11 @@ const { resolve } = require("path");
     //2. unzip file
     unzipFile(
       //1. download file
-      await downloadFile(standenFilename, standenUrl)
+      await downloadFile(`${standenFilename}.zip`, standenUrl)
       )
       );
   //console.log(standenCsv);
-  const standen = standenCsv.filter(search=>search.HOME==="FC.Binkom");
+  const standen = standenCsv.filter(search=>search.TEAM==="FC.Binkom");
   console.log({
     kalender,
     standen
