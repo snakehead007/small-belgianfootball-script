@@ -25,14 +25,14 @@ const AdmZip = __nccwpck_require__(270); //for unzipping
   ];
 
   //Deletes the file with the given filename on the given path
-  // const deleteFile = (path, filename) => {
-  //   const fullPath = `${path}/${filename}`;
-  //   try{
-  //     fs.unlinkSync(fullPath);
-  //   }catch(e){
-  //     console.log(`file ${fullPath} not found`);
-  //   }
-  // };
+  const deleteFile = (path, filename) => {
+    const fullPath = `${path}/${filename}`;
+    try{
+      fs.unlinkSync(fullPath);
+    }catch(e){
+      console.log(`file ${fullPath} not found`);
+    }
+  };
 
   // Promises to download a file from the given url, and saving it as the givenfilename.
   // returns the filename where it was saved
@@ -94,7 +94,13 @@ const AdmZip = __nccwpck_require__(270); //for unzipping
       )
       );
   const kalender = kalenderCsv.filter(search=>search.HOME==="FC.Binkom");
-
+  deleteFile(".",`${kalenderFilename}.json`)
+  fs.writeFile(`${kalenderFilename}.json`, JSON.stringify(kalender, null, 2), function (err) {
+    if (err) {
+      return console.log(err);
+    }
+  })
+  deleteFile(".",`${kalenderFilename}.zip`);
   //standen
   const standenFilename = Object.keys(data[1])[0];
   const standenUrl = data[1][Object.keys(data[1])];
@@ -106,7 +112,6 @@ const AdmZip = __nccwpck_require__(270); //for unzipping
       await downloadFile(`${standenFilename}.zip`, standenUrl)
       )
       );
-  //console.log(standenCsv);
 
   const standenVanFCBinkom = standenCsv.filter(s=>s.TEAM === "FC.Binkom");
   const standen = standenCsv.filter(s=>{
@@ -118,7 +123,13 @@ const AdmZip = __nccwpck_require__(270); //for unzipping
     }
     return foundCorrectDIV;
   })
-  console.log({kalender,standen})
+  deleteFile(".",`${standenFilename}.json`)
+  fs.writeFile(`${standenFilename}.json`, JSON.stringify(standen, null, 2), function (err) {
+    if (err) {
+      return console.log(err);
+    }
+  });
+  deleteFile(".",`${standenFilename}.zip`)
   return {
     kalender,
     standen
